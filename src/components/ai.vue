@@ -11,19 +11,20 @@
         </div>
         <div class="inputbox">
             <div class="ipt" @click="focusInput">
-                <el-input ref="inputRef" class="eipt" v-model="input" style="width: 505px;height: 26px;
+                <el-input class="eipt" v-model="input" style="width: 505px;height: 26px;
                   margin: 17px 20px ;
                   text-indent: 20px;
                   box-shadow: none;
                   border-radius: 40px;" placeholder="请输入你的想法" clearable />
-                <button class="input_btn" @click="sendToBackend">发送</button>
+                <div class="input_btn" @click="sendToBackend">发送</div>
             </div>
         </div>
     </div>
 </template>
 
 <script setup>
-import { ref, onMounted, watch, nextTick } from 'vue';
+import { ref,nextTick} from 'vue';
+
 const inputRef = ref()
 const showboxRef = ref()
 let input = ref('')
@@ -102,14 +103,16 @@ const kimiApi = async (message) => {
 
 <style scoped>
 .input_btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     color: white;
     border-radius: 50%;
-    height: 50px;
-    width: 50px;
+    height: 50.15px;
+    width: 88px;
     background-color: rgb(94, 89, 232);
-    margin: 4px 12px;
     border: none;
-    outline: none;
+    margin-right: 10px;
 }
 
 .ipt:deep(.el-input__inner) {
@@ -144,7 +147,7 @@ const kimiApi = async (message) => {
 
 .ipt {
     display: flex;
-    align-self: center;
+    align-items: center;
     width: 90%;
     height: 60px;
     background-color: white;
@@ -156,14 +159,14 @@ const kimiApi = async (message) => {
     justify-content: center;
     align-items: center;
     width: 100%;
-    height: 120px;
+    height: 100px;
     border-radius: 12px;
 }
 
 .showbox {
-    width: 100%;
+    width: 96%;
     /* 固定宽度 */
-    height: 495px;
+    height: 470px;
     overflow-y: auto;
     padding: 10px;
     background-color: rgb(247, 248, 252);
@@ -196,9 +199,11 @@ const kimiApi = async (message) => {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 20px; /* 添加内边距 */
-    background-color: rgb(247, 248, 252);
-    border-radius: 12px;
-    overflow: hidden; /* 防止内容溢出 */
+    align-items: center;
+    border-radius: 16px;
+    padding-top: 4px;
+    border: 2px solid rgb(169, 176, 216);
+    overflow: hidden;
+    background-color: rgb(237, 240, 246)
 }
 </style>

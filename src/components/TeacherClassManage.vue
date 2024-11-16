@@ -8,7 +8,7 @@
                 <div class="v-l" v-for="(items, index) in groupedItems" :key="index">
                     <div class="v-class" v-for="item in items" :key="item.message"
                         :style="{ backgroundColor: getColorByIndex(index * 4 + items.indexOf(item)) }"
-                        @click="openCourse(item.courseName, item.teacher)">
+                        @click="openCourse(item.courseName, userStore.username)">
                         {{ item.courseName + item.classNumber + '班' }}
                     </div>
                     <div v-if="index === groupedItems.length - 1" class="v-class" @click="dialogFormVisible = true">
@@ -46,6 +46,9 @@
 import { reactive, ref, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router';
+import { useUserStore } from '@/stores/counter';
+
+const userStore = useUserStore()
 
 const router = useRouter()
 
@@ -54,7 +57,7 @@ const formLabelWidth = '140px'
 
 const form = reactive({
     courseName: '',
-    teacher: '',
+    teacher: userStore.username,
 })
 
 const courseNames = ref(['计算机网络', '数据库', '汇编', '操作系统']); // 课程名数组

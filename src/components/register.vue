@@ -2,34 +2,34 @@
     <Alert ref="alert" />
     <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" label-width="auto" class="demo-ruleForm"
         :hide-required-asterisk="true">
-        <el-form-item label="角色" prop="role" >
+        <el-form-item label="角色" prop="role">
             <el-select v-model="ruleForm.role" placeholder="请选择角色">
                 <el-option label="老师" value="teacher"></el-option>
                 <el-option label="学生" value="student"></el-option>
             </el-select>
         </el-form-item>
-        <el-form-item label="学号/工号" prop="user_job_num" >
+        <el-form-item label="学号/工号" prop="user_job_num">
             <el-input v-model="ruleForm.user_job_num" type="text" autocomplete="off" />
         </el-form-item>
-        <el-form-item label="密码" prop="password" >
+        <el-form-item label="密码" prop="password">
             <el-input v-model="ruleForm.password" type="password" autocomplete="off" />
         </el-form-item>
-        <el-form-item label="确认密码" prop="checkPassword" >
+        <el-form-item label="确认密码" prop="checkPassword">
             <el-input v-model="ruleForm.checkPassword" type="password" autocomplete="off" />
         </el-form-item>
-        <el-form-item label="姓名" prop="user_name" >
+        <el-form-item label="姓名" prop="user_name">
             <el-input v-model="ruleForm.user_name" type="text" autocomplete="off" />
         </el-form-item>
-        <el-form-item label="邮箱" prop="user_email" >
+        <el-form-item label="邮箱" prop="user_email">
             <el-input v-model="ruleForm.user_email" type="text" autocomplete="off" />
         </el-form-item>
-        <el-form-item label="电话" prop="user_phone" class="phone-form-item" >
+        <el-form-item label="电话" prop="user_phone" class="phone-form-item">
             <el-input v-model="ruleForm.user_phone" type="text" autocomplete="off" />
             <el-button :loading="isSending" :disabled="isSending" @click="sendVerificationCode">
                 {{ sendStatus }}
             </el-button>
         </el-form-item>
-        <el-form-item label="验证码" prop="verification_code" >
+        <el-form-item label="验证码" prop="verification_code">
             <el-input v-model="ruleForm.verification_code" type="text" autocomplete="off" />
         </el-form-item>
         <el-form-item>
@@ -42,7 +42,10 @@
 <script lang="ts" setup>
 import { reactive, ref, watch, onMounted } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
+
 import axios from 'axios';
+import useAxios from '@/utils/useAxios';
+
 import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router';
 
@@ -154,21 +157,14 @@ const switchToLogin = () => {
 
 const sendVerificationCode = async () => {
     if (isSending.value) return
-
+    const data = JSON.stringify({ phone: ruleForm.user_phone })
+    const url = '/sendSmsPASTUSELESS'
+    const axiosClient = useAxios()
     try {
         isSending.value = true
         sendStatus.value = '发送中'
 
-        const response = await axios({
-            url: 'http://8.137.104.90:8099/sendSmsPASTUSELESS',
-            method: 'POST',
-            data: JSON.stringify({ phone: ruleForm.user_phone }),
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
-        
-        
+        const response = await axiosClient.post(url,data)
         if (response.data.ok) {
             sendStatus.value = '发送成功'
             setTimeout(() => {
@@ -180,7 +176,7 @@ const sendVerificationCode = async () => {
                 sendStatus.value = '发送短信'
             }, 5000) // 5秒后重置按钮状态
         }
-        
+
     } catch (error) {
         console.error('Error sending verification code:', error)
         sendStatus.value = '发送失败'
@@ -192,59 +188,67 @@ const sendVerificationCode = async () => {
     }
 }
 
-const submitForm = () => {
+const submitForm = async() => {
     const formEl = ruleFormRef.value
     if (!formEl) return
     formEl.validate((valid) => {
-        if (valid) {
-            const data = {
-                role: ruleForm.role,
-                user_job_num: ruleForm.user_job_num,
-                password: ruleForm.password,
-                user_name: ruleForm.user_name,
-                user_email: ruleForm.user_email,
-                user_phone: ruleForm.user_phone,
-                verification_code: ruleForm.verification_code,
-            }
-            fetch('http://8.137.104.90:8099/register0720', {
-                method: 'POST',
-                body: JSON.stringify(data),
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            }).then(response => {
-                if (response.status) {
-                    return response.json()
-                }
-                throw new Error('验证码错误')
-            }).then(data => {
-                if (data.status) {
-                    ElMessage({
-                        message: '注册成功',
-                        type: 'success',
-                    })
-                    setTimeout(()=>{
-                        switchToLogin()
-                    },2000)
-                } else {
-                    ElMessage({
-                        message: '验证码错误',
-                        type: 'error',
-                    })
-                }
-            }).catch(error => {
-                console.error('Error verifying code:', error)
-                ElMessage({
-                    message: '验证码验证失败',
-                    type: 'error',
-                })
-            })
-        } else {
-            ElMessage({
-                message: '上传失败',
-                type: 'error',
-            })
-        }
+        // if (valid) {
+        //     const data = {
+        //         role: ruleForm.role,
+        //         user_job_num: ruleForm.user_job_num,
+        //         password: ruleForm.password,
+        //         user_name: ruleForm.user_name,
+        //         user_email: ruleForm.user_email,
+        //         user_phone: ruleForm.user_phone,
+        //         verification_code: ruleForm.verification_code,
+        //     }
+        //     const axiosClient = useAxios()
+        //     try{
+        //         const url = '/register0720'
+        //         const response = axiosClient.post(url,data)
+        //         if(response){
+
+        //         }
+        //     }
+        //     fetch('http://8.137.104.90:8099/register0720', {
+        //         method: 'POST',
+        //         body: JSON.stringify(data),
+        //         headers: {
+        //             'Content-Type': 'application/json',
+        //         },
+        //     }).then(response => {
+        //         if (response.status) {
+        //             return response.json()
+        //         }
+        //         throw new Error('验证码错误')
+        //     }).then(data => {
+        //         if (data.status) {
+        //             ElMessage({
+        //                 message: '注册成功',
+        //                 type: 'success',
+        //             })
+        //             setTimeout(() => {
+        //                 switchToLogin()
+        //             }, 2000)
+        //         } else {
+        //             ElMessage({
+        //                 message: '验证码错误',
+        //                 type: 'error',
+        //             })
+        //         }
+        //     }).catch(error => {
+        //         console.error('Error verifying code:', error)
+        //         ElMessage({
+        //             message: '验证码验证失败',
+        //             type: 'error',
+        //         })
+        //     })
+        // } else {
+        //     ElMessage({
+        //         message: '上传失败',
+        //         type: 'error',
+        //     })
+        // }
     })
 }
 

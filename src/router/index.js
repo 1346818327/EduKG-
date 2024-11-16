@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import AI from '@/views/AI.vue'
 import Login from '@/views/Login.vue'
 import Read from '@/views/Read.vue'
@@ -34,7 +34,7 @@ import StdHomework from '@/components/StdHomework.vue';
 
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/std',

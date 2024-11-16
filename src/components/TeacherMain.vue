@@ -51,8 +51,8 @@ const courseArray = ref([
     { message: '汇编', teacher: '王五' },
 ]);
 const classArray = ref([
-    { courseName: '计算机网络', classNumber: 1, teacher: '张三'},
-    { courseName: '数据库', classNumber: 1,teacher: '李四' },
+    { courseName: '计算机网络', classNumber: 1, teacher: '张三' },
+    { courseName: '数据库', classNumber: 1, teacher: '李四' },
 ]);
 
 function openCourse(message, teacher) {

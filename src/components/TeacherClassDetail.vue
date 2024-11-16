@@ -16,7 +16,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref,onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import StudentTable from './StudentTable.vue';
 
@@ -24,6 +24,11 @@ import StudentTable from './StudentTable.vue';
 const route = useRoute();
 const courseMessage = ref(route.query.message || '暂无课程名');
 const courseTeacher = ref(route.query.teacher || '暂无任课老师');
+
+onMounted(()=>{
+    
+})
+
 </script>
 
 <style scoped>

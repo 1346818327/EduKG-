@@ -1,5 +1,6 @@
 <template>
-    <el-form ref="ruleFormRef" :model="ruleForm" status-icon :rules="rules" label-width="100px" class="demo-ruleForm" :hide-required-asterisk="true">
+    <el-form ref="ruleFormRef" :model="ruleForm" status-icon :rules="rules" label-width="100" class="demo-ruleForm"
+        :hide-required-asterisk="true">
         <el-form-item label="身份" prop="role">
             <el-select v-model="ruleForm.role" placeholder="请选择身份">
                 <el-option label="老师" value="teacher"></el-option>
@@ -22,13 +23,12 @@
 </template>
 
 <script setup lang="ts">
-import axios from 'axios';
-
-import { reactive, ref, watch, onMounted } from 'vue';
+import useAxios from '@/utils/useAxios';
+import { reactive, ref, onMounted } from 'vue';
 import type { FormInstance, FormRules } from 'element-plus';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/counter';
-const UserStore = useUserStore()
+const UserStore = useUserStore();
 
 const router = useRouter();
 const ruleFormRef = ref<FormInstance>();
@@ -38,19 +38,15 @@ const ruleForm = reactive({
     password: '',
 });
 
-let timeoutId = null; // 用于存储 setTimeout 的 ID
-
 const rules = reactive<FormRules<typeof ruleForm>>({
     role: [
-        { required: true, message: '请选择角色', trigger: 'change' }
+        { required: true, message: '请选择角色', trigger: 'blur' }
     ],
     job_num: [
         { required: true, message: '工号不能为空', trigger: 'blur' },
-        { validator: checkJobNum, trigger: 'blur' }
     ],
     password: [
         { required: true, message: '密码不能为空', trigger: 'blur' },
-        { validator: checkPassword, trigger: 'blur' }
     ],
 });
 
@@ -86,29 +82,25 @@ const submitForm = () => {
                 job_num: ruleForm.job_num,
                 password: ruleForm.password
             };
-            const LoginResponse = async () => {
+            const axiosClient = useAxios();
+            async function LoginResponse() {
                 try {
-                    const response = await axios({
-                        url: 'http://8.137.104.90:8099/edukglogin0720',
-                        method: 'POST',
-                        data: data,
-                        // headers: {
-                        //     'Content-Type': 'application/json'
-                        // }
-                    })
-                    if(response){
-                        UserStore.userId = response.data.userId
-                        UserStore.username = response.data.username
-                        UserStore.role = response.data.role
-                        UserStore.email = response.data.email
-                        UserStore.avatar = response.data.avatar
+                    const url = '/edukglogin';
+                    const response = await axiosClient.post(url, data);
+                    const authorizationHeader = response.headers.authorization;
+                    localStorage.setItem("token", authorizationHeader);
+                    if (response) {
+                        UserStore.userId = response.data.data.userId;
+                        UserStore.username = response.data.data.username;
+                        UserStore.role = response.data.data.role;
+                        UserStore.email = response.data.data.email;
+                        UserStore.avatar = response.data.data.avatar;
+                        UserStore.saveState()
                     }
-                    console.log(UserStore.userId);
-                    
-                    if(response.data.role=='teacher'){
-                        router.push("/teacher")
-                    }else{
-                        router.push("/std")
+                    if (UserStore.role == "teacher") {
+                        router.push("/teacher");
+                    } else {
+                        router.push("/std");
                     }
                 } catch (error) {
                     console.error('请求失败:', error);
@@ -126,28 +118,6 @@ const goToRegister = () => {
 };
 
 const emit = defineEmits(['switchToRegister']);
-
-onMounted(() => {
-    watch(() => ruleForm.job_num, (newVal, oldVal) => {
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => {
-            const formEl = ruleFormRef.value;
-            if (formEl) {
-                formEl.validateField('job_num');
-            }
-        }, 300); // 0.3 秒后验证
-    });
-
-    watch(() => ruleForm.password, (newVal, oldVal) => {
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => {
-            const formEl = ruleFormRef.value;
-            if (formEl) {
-                formEl.validateField('password');
-            }
-        }, 300); // 0.3 秒后验证
-    });
-});
 </script>
 
 <style scoped>

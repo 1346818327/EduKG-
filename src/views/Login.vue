@@ -70,7 +70,7 @@ const switchToLogin = () => {
     height: 100%;
     z-index: -999;
     background-position: center;
-    background-image: url('../assets//img/back_image1.jpeg');
+    background-image: url('https://bu.dusays.com/2023/08/21/64e354529345d.jpg');
     background-repeat: no-repeat;
     background-size: cover;
     display: flex;
