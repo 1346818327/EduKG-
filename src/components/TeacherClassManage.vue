@@ -43,11 +43,14 @@
 </template>
 
 <script setup>
-import { reactive, ref, computed } from 'vue'
+import { reactive, ref, computed,onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/counter';
 
+import useAxios from '@/utils/useAxios';
+
+const axiosClient = useAxios()
 const userStore = useUserStore()
 
 const router = useRouter()
@@ -64,12 +67,12 @@ const courseNames = ref(['计算机网络', '数据库', '汇编', '操作系统
 const courseClassesCount = reactive({});
 
 const courseArray = ref([
-    { courseName: '计算机网络',classNumber:1,teacher: '张三'}, 
-    { courseName: '数据库',classNumber:1,teacher: '李四'},     
-    { courseName: '汇编',classNumber:1,teacher: '王五'},        
-    { courseName: '操作系统',classNumber:1,teacher: '张三'},
-    { courseName: '计算机网络',classNumber:2,teacher: '李四'}, 
-    { courseName: '数据库',classNumber:2,teacher: '王五'},  
+    { courseName: '计算机网络',classNumber:1}, 
+    { courseName: '数据库',classNumber:1},     
+    { courseName: '汇编',classNumber:1},        
+    { courseName: '操作系统',classNumber:1},
+    { courseName: '计算机网络',classNumber:2}, 
+    { courseName: '数据库',classNumber:2},  
 ]);
 
 const groupedItems = computed(() => {
@@ -95,17 +98,15 @@ function addCourse() {
     // 向 courseArray 添加新课程
     courseArray.value.push({
         courseName: courseName,
-        teacher: teacher,
         classNumber: newClassNumber,
     });
 
     // 更新班级数量（这一步可以省略，因为班级数量是通过数组长度来确定的）
     // courseClassesCount[courseName] = newClassNumber;
-
+    syncCoursesWithBackend()
     // 清空表单
     dialogFormVisible.value = false;
     form.courseName = '';
-    form.teacher = '';
 
     // 显示成功消息
     ElMessage.success(`成功添加${courseName} ${newClassNumber}班`);
@@ -122,6 +123,39 @@ function openCourse(message, teacher) {
         query: { message, teacher }
     });
 }
+
+
+async function fetchCourses() {
+    try {
+        const response = await axiosClient.get('/api/courses');
+        courseNames.value = response.data;
+    } catch (error) {
+        ElMessage.error('获取课程列表失败，请稍后再试');
+        console.error('Error fetching courses:', error);
+    }
+}
+async function fetchClassname() {
+    try {
+        const response = await axiosClient.get('/api/class');
+        courseArray.value = response.data;
+    } catch (error) {
+        ElMessage.error('获取班级列表失败，请稍后再试');
+        console.error('Error fetching courses:', error);
+    }
+}
+async function syncCoursesWithBackend() {
+    try {
+        await axiosClient.post('/api/class', courseArray.value);
+        ElMessage.success('班级同步成功');
+    } catch (error) {
+        ElMessage.error('班级同步失败，请稍后再试');
+        console.error('Error syncing courses:', error);
+    }
+}
+onMounted(()=>{
+    fetchCourses()
+    fetchClassname()
+})
 </script>
 
 <style scoped>

@@ -10,7 +10,7 @@
             <router-link class="link" to="/std/StdMain">总览</router-link>
             <router-link class="link" to="/std/StdCoursemanager">课程管理</router-link>
             <router-link class="link" to="/std/Datamanage">日程管理</router-link>
-            <router-link class="link" to="/std/StdHomework">我的作业</router-link>
+            <!-- <router-link class="link" to="/std/StdHomework">我的作业</router-link> -->
             <div class="absolute-btn-container" @click="openAIAssistant">
                 <!-- 按钮样式 -->
                 <el-button type="primary" class="ai-assistant-btn">AI助手</el-button>

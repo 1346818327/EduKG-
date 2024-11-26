@@ -25,7 +25,7 @@
             <div class="course-container">
                 <div class="v-class" v-for="(item, index) in classArray" :key="index"
                     :style="{ backgroundColor: colors[index % colors.length] }"
-                    @click="openClass(item.courseName, item.teacher)">
+                    @click="openClass(item.courseName, userStore.username)">
                     {{ item.courseName + item.classNumber + '班' }}
                 </div>
             </div>
@@ -35,8 +35,11 @@
 </template>
 
 <script setup>
+import { useUserStore } from '@/stores/counter';
 import CalendarView from './CalendarView.vue';
 import { ref } from 'vue';
+
+const userStore = useUserStore()
 
 import { useRouter } from 'vue-router';
 

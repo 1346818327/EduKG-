@@ -35,9 +35,16 @@
 </template>
 
 <script setup>
-import { reactive, ref, computed } from 'vue'
+import { reactive, ref, computed ,onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router';
+
+
+import { useUserStore } from '@/stores/counter';
+
+const userStore = useUserStore()
+import useAxios from '@/utils/useAxios';
+const axiosClient = useAxios();
 
 const router = useRouter()
 
@@ -46,13 +53,13 @@ const formLabelWidth = '140px'
 
 const form = reactive({
     name: '',
-    teacher: '',
+    teacher: userStore.username,
 })
 const courseArray = ref([
-    { message: '计算机网络', teacher: '张三' },  // 浅绿色
-    { message: '数据库', teacher: '李四' },       // 浅红色
-    { message: '汇编', teacher: '王五' },         // 浅黄色
-    { message: '操作系统', teacher: '赵六' },
+    { message: '计算机网络' },  // 浅绿色
+    { message: '数据库' },       // 浅红色
+    { message: '汇编' },         // 浅黄色
+    { message: '操作系统' },
 ]);
 const groupedItems = computed(() => {
     const result = [];
@@ -62,15 +69,25 @@ const groupedItems = computed(() => {
     return result;
 });
 
-function addCourse() {
+async function syncCoursesWithBackend() {
+    try {
+        await axiosClient.post('/api/courses', courseArray.value);
+        ElMessage.success('课程同步成功');
+    } catch (error) {
+        ElMessage.error('课程同步失败，请稍后再试');
+        console.error('Error syncing courses:', error);
+    }
+}
+
+ function addCourse() {
     const newCourse = {
         message: form.name,
-        teacher: form.teacher,
     };
     if (courseArray.value.some(item => item.message === newCourse.message)) {
         ElMessage.error('课程名已存在');
-    } else {
+    } else {    
         courseArray.value.push(newCourse);
+        syncCoursesWithBackend()
         dialogFormVisible.value = false;
         form.name = '';
         form.teacher = '';
@@ -85,9 +102,24 @@ function getColorByIndex(index) {
 function openCourse(message, teacher) {
     router.push({ 
         path: '/teacher/TeacherCourseDetail', 
-        query: { message, teacher }
+        query: { message }
     });
 }
+
+async function fetchCourses() {
+    try {
+        const response = await axiosClient.get('/api/courses');
+        courseArray.value = response.data;
+    } catch (error) {
+        ElMessage.error('获取课程列表失败，请稍后再试');
+        console.error('Error fetching courses:', error);
+    }
+}
+
+onMounted(()=>{
+    fetchCourses()
+})
+
 </script>
 
 <style scoped>

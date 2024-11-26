@@ -28,9 +28,9 @@
             <router-link class="link" to="/teacher/TeacherMain">总览</router-link>
             <router-link class="link" to="/teacher/TeacherCoursemanage">课程管理</router-link>
             <router-link class="link" to="/teacher/TeacherClassManage">学生管理</router-link>
-            <router-link class="link" to="/teacher/TeacherUpload">文件上传</router-link>
+            <!-- <router-link class="link" to="/teacher/TeacherUpload">文件上传</router-link> -->
             <router-link class="link" to="/teacher/Datamanage">日程管理</router-link>
-            <router-link class="link" to="/teacher/TeacherHomework">作业与评估</router-link>
+            <!-- <router-link class="link" to="/teacher/TeacherHomework">作业与评估</router-link> -->
 
         </div>
         <div class="main">
@@ -49,14 +49,12 @@ const router = useRouter()
 const userStore = useUserStore()
 
 const handleCommand = (command) => {
-    console.log(command);
     if (command == 'user') {
         console.log(command);
 
         ElMessage('跳转到个人中心')
     }
     else if (command == 'logout') {
-        console.log(command);
         userStore.logout()
         localStorage.clear()
         router.push('/login')

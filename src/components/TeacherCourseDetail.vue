@@ -16,7 +16,7 @@
             <h2>课程文件上传</h2>
         </div>
         <div class="chapterbox">
-            <Upload/>
+            <Upload courseMessage/>
         </div>
     </div>
 </template>
@@ -27,9 +27,12 @@ import { useRoute } from 'vue-router';
 import TeacherCourseChapter from './TeacherCourseChapter.vue';
 import Upload from './Upload.vue';
 
+import { useUserStore } from '@/stores/counter';
+const userStore = useUserStore()
+
 const route = useRoute();
 const courseMessage = ref(route.query.message || '暂无课程名');
-const courseTeacher = ref(route.query.teacher || '暂无任课老师');
+const courseTeacher = ref(userStore.username || '暂无任课老师');
 </script>
 
 <style scoped>
