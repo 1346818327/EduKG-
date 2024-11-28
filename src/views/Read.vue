@@ -26,7 +26,6 @@
       <span>返回</span>
     </div>
     <div class="article_title">
-      <!-- 文章名传入 -->
       <span>{{ article_title }}</span>
     </div>
   </div>
@@ -47,7 +46,6 @@
         <div style="line-height: 30px;font-size: 18px;">
           {{ story.content }}
         </div>
-        <!-- 文章内容填充 -->
       </div>
       <div class="page_turn">
         <div class="page_bt">

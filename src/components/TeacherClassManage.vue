@@ -63,7 +63,7 @@ const form = reactive({
     teacher: userStore.username,
 })
 
-const courseNames = ref(['计算机网络', '数据库', '汇编', '操作系统']); // 课程名数组
+const courseNames = ref(['计算机网络', '数据库', '汇编', '操作系统']);
 const courseClassesCount = reactive({});
 
 const courseArray = ref([
@@ -87,7 +87,6 @@ function addCourse() {
     let courseName = form.courseName;
     let teacher = form.teacher;
     
-    // 查找当前课程名下的最大班级编号
     let maxClassNumber = courseArray.value.reduce((max, item) => {
         return item.courseName === courseName ? Math.max(max, item.classNumber) : max;
     }, 0);

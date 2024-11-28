@@ -56,9 +56,9 @@ const form = reactive({
     teacher: userStore.username,
 })
 const courseArray = ref([
-    { message: '计算机网络' },  // 浅绿色
-    { message: '数据库' },       // 浅红色
-    { message: '汇编' },         // 浅黄色
+    { message: '计算机网络' },
+    { message: '数据库' }, 
+    { message: '汇编' }, 
     { message: '操作系统' },
 ]);
 const groupedItems = computed(() => {

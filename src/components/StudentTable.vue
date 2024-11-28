@@ -42,8 +42,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { ElTable, ElButton, ElDialog, ElForm, ElFormItem, ElInput, ElMessage } from 'element-plus';
-import * as XLSX from 'xlsx';
-import {genFileId,  UploadProps, UploadRawFile } from 'element-plus';
 
 // 模拟的班级数据
 const mockData = ref([
